@@ -1,0 +1,40 @@
+MID	Location	Colour	Host species	Host genus	Type
+1	Falkland Islands	Unknown			
+2	Falkland Islands	Red	Ahnfeltia plicata	Ahnfeltia	
+3	Falkland Islands	Brown	Desmarestia chordalis	Desmarestia	
+5	Falkland Islands	Brown	Caepidium antarcticum	Caepidium	
+6	Falkland Islands	Brown	Ectocarpus falklandicus	Ectocarpus	
+7	Falkland Islands	Brown	Corycus lanceolatus	Corycus	
+8	Falkland Islands	Red			
+10	Falkland Islands	Brown		Striaria	
+11	Falkland Islands	Red		Ballia	
+14	Falkland Islands	Brown		Scytothamnus	
+15	Falkland Islands	Red		Porphyra	
+17	Falkland Islands	Red			
+18	Falkland Islands	Brown	Stereocladon rugulosus	Stereocladon	Epiphyte
+19	Baffin Island	Brown		Agarum	
+20	Baffin Island	Brown		Cladosiphon	
+21	Baffin Island	Brown		Pylaiella	Epiphyte
+23	Baffin Island	Brown		Pylaiella	Epiphyte
+24	Baffin Island	Green	Ulva flexuosa	Ulva	
+25	Baffin Island	Brown		Pylaiella	Epiphyte
+26	Baffin Island	Brown		Sphacelaria	
+28	Baffin Island	Brown		Elachista	Epiphyte
+29	Baffin Island	Brown			
+30	Baffin Island	Red	Palmaria palmata	Palmaria	
+31	Baffin Island	Green			Epiphyte
+32	Falkland Islands	Brown		Punctaria	
+33	Falkland Islands	Red		Porphyra	
+35	Falkland Islands	Brown		Ectocarpus	
+36	Falkland Islands	Red			
+37	Ascension Island	Green	Ulva clathrata	Ulva	
+38	Ascension Island	Red		Palisada	
+39	Ascension Island	Red		Hypnea	
+40	Ascension Island	Red		Jania	
+41	Baffin Island	Red			
+42	Baffin Island	Brown	Pylaiella littoralis	Pylaiella	Infected
+46	Baffin Island	Green	Blidingia minima	Blidingia	
+48	Baffin Island	Red		Palmaria	
+49	Baffin Island	Brown		Elachista	
+52	Baffin Island	Brown			Infected
+53	Falkland Islands	Brown	Dictyosiphon hirsutus	Dictyosiphon	
