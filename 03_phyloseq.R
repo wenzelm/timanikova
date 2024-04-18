@@ -175,6 +175,7 @@ for(x in subset(sample_data(ps.filt[[1]]), !is.na(Host.genus))$MID){
     sp <- paste0(meta[x, "Host.genus"], "_")
     print(sp)
   }
+  print(length(unique(tree$tip.label[grep(sp, tree$tip.label)])))
   sp <- sample(unique(tree$tip.label[grep(sp, tree$tip.label)]), 1)
   print(sp)
   tree$tip.label[grep(sp, tree$tip.label)] <- x
@@ -200,6 +201,8 @@ gg.tol <- ggtree(tree, branch.length = "none") %<+% tr.meta +
   geom_cladelabel(node=getMRCA(tree, subset(tr.meta, Colour=="Brown")$MID), label="Brown algae", align=TRUE, offset=6.5, offset.text=0.2, extend=0.25,
                   geom='label', color=c(pcols2["Brown"], "white"), fill=pcols2["Brown"], barsize = 3, label.padding = unit(0.5, "lines")) +
   theme(legend.position = "none")
+gg.tol
+saveRDS(tree, "tree.TOL.RDS")
 grid.arrange(gg.map, gg.tol, ncol=1)
 
 pdf("map.pdf", width=8, height=9.5)
@@ -260,6 +263,10 @@ lapply(ps.filt, function(x) table(tax_table(x)[, "Family"]))
 #
 taxbarplot <- function(p, tax="Phylum"){
   p <- transform_sample_counts(p, function(y) y / sum(y))
+  # manually fix some strange taxonomic labels
+  pt <- tax_table(p)
+  pt[,"Phylum"] <- gsub("Cryptophyceae", "Cryptophyta", pt[,"Phylum"])
+  tax_table(p) <- pt
   pal <- brewer.pal(n = length(unique(tax_table(p)[,tax])), name = "Set2")
   pal[2] <- "lightblue1"
   gg.tax1 <- plot_bar(tax_glom(p, tax, NArm=F), fill=tax) +
@@ -295,6 +302,7 @@ grid.draw(taxbarplot(ps.filt[[1]]))
 taxboxplot <- function(p, tax="Order"){
   p <- tax_glom(p, tax, NArm=F)
   p <- transform_sample_counts(p, function(y) y / sum(y))
+  
   df <- melt(otu_table(p))
   colnames(df) <- c("MID", "ASV", "Abundance")
   # merge sample data
@@ -312,7 +320,7 @@ taxboxplot <- function(p, tax="Order"){
     scale_x_discrete(limits=rev) +
     facet_wrap(~Colour, nrow=1) +
     scale_colour_manual(values=pcols2, limits=force) +
-    ylab("Relative abundance") +
+    ylab("Relative abundance") + xlab("") +
     theme_bw() +
     theme(panel.grid.major.x = element_blank(),
           panel.grid.minor = element_blank(),
@@ -1104,7 +1112,7 @@ p1 <- arrangeGrob(grobs=c(mantel1, mantel4), ncol=3, top=textGrob("All ASVs",gp=
 p2 <- arrangeGrob(grobs=c(mantel2, mantel5), ncol=3, top=textGrob("Oomycete ASVs",gp=gpar(fontsize=14,font=2), x=0.01, hjust=0))
 p3 <- arrangeGrob(grobs=c(mantel3, mantel6), ncol=3, top=textGrob("Diatom ASVs",gp=gpar(fontsize=14,font=2), x=0.01, hjust=0))
 
-pdf("mantel.pdf", width=12, height=20)
+pdf("FigS4.pdf", width=12, height=20)
 grid.arrange(p1, p2, p3, ncol=1) #, heights=c(1,0.5,1))
 dev.off()
 
@@ -1178,6 +1186,7 @@ phylosymbio.RF <- function(ps, tr){
   gg.trees <- lapply(list(c("Red", "Brown", "Green"), c("Brown"), c("Red")), function(cl){
     p <- prune_samples(sample_data(ps)$Colour %in% c(cl, "Green"), ps)  
     dg <- ape::as.phylo(hclust(phyloseq::distance(p, method="bray"), method="ward.D2"))
+    #dg <- ape::as.phylo(hclust(phyloseq::distance(p, method="wunifrac"), method="ward.D2"))
     # reroot at a green alga (ideally all, but not always possible)
     dg <- ape::root(dg, outgroup=rownames(subset(meta, Host.species=="Ulva clathrata")), resolve.root=T)
     try(dg <- ape::root(dg, outgroup=intersect(rownames(subset(meta, Colour=="Green" & ! is.na(Host.genus))), dg$tip.label)[3], resolve.root=T))
@@ -1249,15 +1258,15 @@ phylosymbio.RF <- function(ps, tr){
 }
 
 gg.phy1 <- phylosymbio.RF(ps.filt[[1]], tree)
-#gg.phy1.1 <- phylosymbio.RF(ps.filt[[1]], tol)
+gg.phy1.1 <- phylosymbio.RF(ps.filt[[1]], tol)
 # weak evidence of phylosymbiosis for red algae with whole microbiome
 
 gg.phy2 <- phylosymbio.RF(ps.oo.clade[[1]], tree)
-#gg.phy2.1 <- phylosymbio.RF(ps.oo.clade[[1]], tol)
+gg.phy2.1 <- phylosymbio.RF(ps.oo.clade[[1]], tol)
 # no evidence of phylosymbiosis with oomycetes
 
 gg.phy3 <- phylosymbio.RF(ps.dia.clade[[1]], tree)
-#gg.phy3.2 <- phylosymbio.RF(ps.dia.clade[[1]], tol)
+gg.phy3.2 <- phylosymbio.RF(ps.dia.clade[[1]], tol)
 # excellent evidence of phylosymbiosis for red algae with diatoms!
 
 do.call(grid.arrange, c(gg.phy1, gg.phy1.1, ncol=2))

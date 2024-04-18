@@ -12,8 +12,13 @@ grep -A 1 "rbcL" allseqs.fa > allseqs.rbcL.fa
 # keep longest sequence per species
 awk -F'|' '/^>/{s=$2; l=$0}!/>/{print s, length($0), l}' OFS=":" allseqs.rbcL.fa | awk -F':' '$2>500' | sort -k1,1 -k2,2gr -t ':' | tee allseqs.rbcL.lengths.txt | sort -u -k 1,1 -t ':' > rbcL.best.species.txt
 
+# we need to remove some accessions that represent geographically inappropriate isolates:
+# Elachista antarctica (AJ439841) is Antarctic (we need Baffin)
+# Palmaria decipiens (MF543838) is Antarctic (we need Baffin)
+# Porphyra linearis is European (we need P. capensis or mumfordi instead)
+
 # longest per genus
-awk -F':' '{gsub(" .*", "", $1); print $1, $2, $3}' OFS=":" rbcL.best.species.txt | sort -k1,1 -k2,2gr -t ':' | sort -u -k 1,1 -t ':' | grep -v -e "aculeata" -e "Fucus" > rbcL.best.genus.txt
+grep -v -e "MF543838" -e "AJ439841" -e "AF055398.1" rbcL.best.species.txt | awk -F':' '{gsub(" .*", "", $1); print $1, $2, $3}' OFS=":" | sort -k1,1 -k2,2gr -t ':' | sort -u -k 1,1 -t ':' | grep -v -e "aculeata" -e "Fucus" > rbcL.best.genus.txt
 
 # we need additional barcodes for some genera/species:
 # particularly Pylaiella, for which we need 3 additional sequences
@@ -27,12 +32,13 @@ grep -Fw \
 -e "Chorda asiatica" \
 -e "Desmarestia chordalis" \
 -e "Ectocarpus siliculosus" \
--e "Elachista fucicola" \
+-e "Elachista scutulata" \
 -e "Porphyra linearis" \
--e "Palmaria decipiens" \
+-e "Palmaria hecatensis" \
 -e "Ulva flexuosa" \
 rbcL.best.species.txt | cat - rbcL.best.genus.txt | grep -v -e "Chorda" -e "P. littoralis" | cut -f 3 -d ":" > rbcL.best.txt
 grep "Pylaiella" allseqs.rbcL.lengths.txt | head -n 4 | tail -n 3 | cut -f 3 -d ":" >> rbcL.best.txt
+
 
 # simplify names
 # give Pylaiella sequences a unique name
